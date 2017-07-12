@@ -1,0 +1,12 @@
+- name: Set bucket events
+  s3_event:
+    region: "{{ s3_buckets[bucket_name].region | default(region) }}"
+    profile: "{{ s3_buckets[bucket_name].profile | default(aws_account_name) }}"
+    state: "{{ 'present' if stage == 'create' else 'absent' }}"
+    bucket: "{{ s3_buckets[bucket_name].name }}"
+    id: "{{ item.id }}"
+    lambda_function_arn: "{{ item.lambda_function_arn }}"
+    prefix: "{{ item.prefix | default(omit) }}"
+    suffix: "{{ item.suffix | default(omit) }}"
+    events: "{{ item.events }}"
+  with_items: "{{ s3_buckets[bucket_name].events|default([]) }}"
